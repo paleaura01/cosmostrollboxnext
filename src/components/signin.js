@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Auth } from "aws-amplify";
 import { withRouter } from "next/router";
 
-
 const SignIn = ({ router }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +12,7 @@ const SignIn = ({ router }) => {
   const [isSigningIn, setIsSigningIn] = useState(false);
 
   const history = router;
-  
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -41,9 +40,6 @@ const SignIn = ({ router }) => {
       try {
         await Auth.signIn(username, password);
         history.push("/trollbox");
-        if (rememberMe) {
-          await Auth.signIn(username, password, true);
-        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -103,56 +99,56 @@ const SignIn = ({ router }) => {
           placeholder="Username"
           value={username}
           onChange={handleUsernameChange}
-          autoComplete="current-username"
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={handlePasswordChange}
-          autoComplete="current-password"
-        />
-        <br />
-        {!isSignIn && (
+          autoComplete="username"
+          />
+          <br />
+          <input
+                 type="password"
+                 placeholder="Password"
+                 value={password}
+                 onChange={handlePasswordChange}
+                 autoComplete="current-password"
+               />
+          <br />
+          {!isSignIn && (
           <div>
-            <input
-              type="text"
-              placeholder="Confirmation Code"
-              value={confirmationCode}
-              onChange={handleConfirmationCodeChange}
-            />
-            <br />
-            <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
+          <input
+                     type="text"
+                     placeholder="Confirmation Code"
+                     value={confirmationCode}
+                     onChange={handleConfirmationCodeChange}
+                   />
+          <br />
+          <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
           </div>
-        )}
-        {isSignIn && (
+          )}
+          {isSignIn && (
           <div>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={handleRememberMeChange}
-              id="remember-me"
-            />
-            <label htmlFor="remember-me">Remember me</label>
-            <br />
+          <input
+                     type="checkbox"
+                     checked={rememberMe}
+                     onChange={handleRememberMeChange}
+                     id="remember-me"
+                   />
+          <label htmlFor="remember-me">Remember me</label>
+          <br />
           </div>
-        )}
-        <button type="submit">{isSignIn ? "Sign In" : "Sign Up"}</button>
-      </form>
-      {isSignIn ? (
-        <div>
+          )}
+          <button type="submit">{isSignIn ? "Sign In" : "Sign Up"}</button>
+          </form>
+          {isSignIn ? (
+          <div>
           Don't have an account?{" "}
           <button onClick={handleSignUp}>Sign Up!</button>
-        </div>
-      ) : (
-        <div>
+          </div>
+          ) : (
+          <div>
           Already have an account?{" "}
           <button onClick={() => setIsSignIn(true)}>Sign In!</button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default withRouter(SignIn);
+          </div>
+          )}
+          </div>
+          );
+          };
+          
+          export default withRouter(SignIn);
