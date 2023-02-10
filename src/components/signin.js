@@ -8,6 +8,7 @@ const SignIn = () => {
   const [confirmationCode, setConfirmationCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -31,7 +32,8 @@ const SignIn = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isSignIn) {
+    if (isSignIn && !isSigningIn) {
+      setIsSigningIn(true);
       try {
         await Auth.signIn(username, password);
         if (rememberMe) {
@@ -39,6 +41,8 @@ const SignIn = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsSigningIn(false);
       }
     } else {
       try {
@@ -94,6 +98,7 @@ const SignIn = () => {
           placeholder="Username"
           value={username}
           onChange={handleUsernameChange}
+          autoComplete="current-username"
         />
         <br />
         <input
@@ -101,46 +106,47 @@ const SignIn = () => {
           placeholder="Password"
           value={password}
           onChange={handlePasswordChange}
+          autoComplete="current-password"
         />
         <br />
         {!isSignIn && (
-<div>
-<input
-           type="text"
-           placeholder="Confirmation Code"
-           value={confirmationCode}
-           onChange={handleConfirmationCodeChange}
-         />
-<br />
-<button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
-</div>
-)}
-{isSignIn && (
-<div>
-<input
-           type="checkbox"
-           checked={rememberMe}
-           onChange={handleRememberMeChange}
-         />
-Remember me
-<br />
-</div>
-)}
-<button type="submit">{isSignIn ? "Sign In" : "Sign Up"}</button>
-</form>
-{isSignIn ? (
-<div>
-Don't have an account?{" "}
-<button onClick={handleSignUp}>Sign Up!</button>
-</div>
-) : (
-<div>
-Already have an account?{" "}
-<button onClick={() => setIsSignIn(true)}>Sign In!</button>
-</div>
-)}
-</div>
-);
+          <div>
+            <input
+              type="text"
+              placeholder="Confirmation Code"
+              value={confirmationCode}
+              onChange={handleConfirmationCodeChange}
+            />
+            <br />
+            <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
+          </div>
+        )}
+        {isSignIn && (
+          <div>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={handleRememberMeChange}
+            />
+            Remember me
+            <br />
+          </div>
+        )}
+        <button type="submit">{isSignIn ? "Sign In" : "Sign Up"}</button>
+      </form>
+      {isSignIn ? (
+        <div>
+          Don't have an account?{" "}
+          <button onClick={handleSignUp}>Sign Up!</button>
+        </div>
+      ) : (
+        <div>
+          Already have an account?{" "}
+          <button onClick={() => setIsSignIn(true)}>Sign In!</button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SignIn;
