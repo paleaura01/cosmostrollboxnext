@@ -6,11 +6,9 @@ const Home = () => {
   
 
   return (
+    
     <div>
-   
         <SignIn/>
-
-
     </div>
   );
 };

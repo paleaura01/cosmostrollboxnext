@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Auth } from "aws-amplify";
+import { withRouter } from "next/router";
 
-const SignIn = () => {
+
+const SignIn = ({ router }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -10,6 +12,8 @@ const SignIn = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  const history = router;
+  
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -36,6 +40,7 @@ const SignIn = () => {
       setIsSigningIn(true);
       try {
         await Auth.signIn(username, password);
+        history.push("/trollbox");
         if (rememberMe) {
           await Auth.signIn(username, password, true);
         }
@@ -149,4 +154,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default withRouter(SignIn);

@@ -4,7 +4,9 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
+      <title>Interchain Trollbox</title>
       <body>
+
         <Main />
         <NextScript />
       </body>
