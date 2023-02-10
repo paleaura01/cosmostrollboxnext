@@ -132,8 +132,9 @@ const SignIn = ({ router }) => {
               type="checkbox"
               checked={rememberMe}
               onChange={handleRememberMeChange}
+              id="remember-me"
             />
-            Remember me
+            <label htmlFor="remember-me">Remember me</label>
             <br />
           </div>
         )}
