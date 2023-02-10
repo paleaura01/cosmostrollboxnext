@@ -1,0 +1,18 @@
+             /* <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FaLock className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                </span>
+                Sign in
+              </button>
+            </div>
+            <div className="flex justify-around mt-6">
+              <button className="w-32 py-2 m-2  text-sm font-medium bg-indigo-600 hover:indigo-500 rounded-md text-white">Google</button>
+              <button className="w-32 py-2 m-2 text-sm font-medium bg-indigo-600 hover:indigo-500 rounded-md text-white">Twitter</button>
+              <button className="w-32 py-2 m-2 text-sm font-medium bg-indigo-600 hover:indigo-500 rounded-md text-white">Keplr</button>
+            </div>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Or{' '}
+              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                 register  
+              </a>
+              {' '}for a new account.{' '} 
+            </p>  */
