@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Auth } from "aws-amplify";
-import SignIn from "./SignIn";
-import TrollBox from "./TrollBox";
+import SignIn from "../components/signin";
+import TrollBox from "../components/trollbox";
 
 const Home = () => {
 const [isSignedIn, setIsSignedIn] = useState(false);
