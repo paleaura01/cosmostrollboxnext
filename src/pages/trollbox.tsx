@@ -90,9 +90,10 @@ const TrollBox = () => {
         </div>
       ))}
       <form onSubmit={handleSubmit}>
-        <input type="text" value={text} onChange={handleTextChange} />
-        <button type="submit">Send</button>
-      </form>
+  <label htmlFor="messageInput">Enter your message:</label>
+  <input id="messageInput" type="text" value={text} onChange={handleTextChange} />
+  <button type="submit">Send</button>
+</form>
       <button onClick={handleSignOut}>Sign Out</button>
     </div>
   );

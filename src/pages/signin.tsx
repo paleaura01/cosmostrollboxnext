@@ -29,6 +29,7 @@ const SignIn = () => {
       setIsLoading(false);
     }
   };
+
   const handleConfirmSignUp = async () => {
     try {
       await Auth.confirmSignUp(username, confirmationCode);
@@ -78,9 +79,9 @@ const SignIn = () => {
       <button type="submit">{isSignIn ? 'Sign In' : 'Sign Up'}</button>
       {isSignIn ? (
         <div>
-            Don't have an account?{' '}
-          <button onClick={handleSignUp}>Sign Up!</button>
-          </div>
+        Don&apos;t have an account?{' '}
+        <button onClick={handleSignUp}>Sign Up!</button>
+      </div>
         ) : (
           <div>
             Already have an account?{' '}
