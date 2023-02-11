@@ -7,7 +7,6 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [confirmationCode, setConfirmationCode] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -28,16 +27,12 @@ const SignIn = () => {
     setConfirmationCode(event.target.value);
   };
 
-  const handleRememberMeChange = (event) => {
-    setRememberMe(event.target.checked);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     try {
       if (isSignIn) {
-        await Auth.signIn(username, password, rememberMe ? 'user' : undefined);
+        await Auth.signIn(username, password);
         router.push('/trollbox');
       } else {
         const signUpResult = await Auth.signUp({
@@ -110,18 +105,6 @@ onChange={handleConfirmationCodeChange}
 <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
 </div>
 )}
-{isSignIn && (
-<div>
-<input 
-type="checkbox" 
-checked={rememberMe} 
-onChange={handleRememberMeChange} 
-id="remember-me" 
-         />
-<label htmlFor="remember-me">Remember me</label>
-<br />
-</div>
-)}
 <button type="submit">{isSignIn ? 'Sign In' : 'Sign Up'}</button>
 </form>
 {isSignIn ? (
@@ -140,3 +123,4 @@ Already have an account?{' '}
 };
 
 export default SignIn;
+
