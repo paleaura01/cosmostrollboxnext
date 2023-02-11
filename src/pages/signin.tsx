@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router'
 
-const SignIn = ({ router }) => {
+const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -10,6 +10,7 @@ const SignIn = ({ router }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -138,4 +139,4 @@ Already have an account?{' '}
 );
 };
 
-export default withRouter(SignIn);
+export default SignIn;

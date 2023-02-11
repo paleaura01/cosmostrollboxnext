@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { CognitoUserPool } from "amazon-cognito-identity-js";
-import { withRouter, useRouter } from "next/router";
+import { useRouter } from 'next/router'
 
 const TrollBox = () => {
   const [username, setUsername] = useState("");
@@ -25,10 +25,8 @@ const TrollBox = () => {
           setUsername(session.getIdToken().payload.username);
         }
       });
-    } else {
-      console.error("User is not authenticated");
-      router.push("/");
-    }
+    } 
+    
     const getMessages = `query {
       listMessages {
         items {
@@ -88,4 +86,4 @@ const TrollBox = () => {
 </div>
 );
 };
-export default withRouter(TrollBox);
+export default TrollBox;
