@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { Auth } from "aws-amplify";
-import SignIn from "src/components/signin.js";
-import TrollBox from "src/components/trollbox.js";
+import SignIn from "./SignIn";
+import TrollBox from "./TrollBox";
 
 const Home = () => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const router = useRouter();
+const [isSignedIn, setIsSignedIn] = useState(false);
 
-  useEffect(() => {
-    Auth.currentSession().then((session) => {
-      if (session) {
-        setIsSignedIn(true);
-      }
-    });
-  }, []);
+useEffect(() => {
+const checkUser = async () => {
+try {
+const session = await Auth.currentSession();
+setIsSignedIn(!!session);
+} catch (error) {
+console.error(error);
+}
+};
 
-  return (
-    <div>
-      {isSignedIn ? (
-        <TrollBox />
-      ) : (
-        <SignIn setIsSignedIn={setIsSignedIn} />
-      )}
-    </div>
-  );
+checkUser();
+}, []); // Only run the effect on mount
+
+return (
+<div>
+{isSignedIn ? (
+<TrollBox />
+) : (
+<SignIn />
+)}
+</div>
+);
 };
 
 export default Home;
