@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
-import SignIn from './signin';
-import Trollbox from './trollbox';
+import SignIn from './SignIn';
+import TrollBox from './TrollBox';
 import { withRouter } from 'next/router';
 
 const Home = ({ router }) => {
@@ -9,22 +9,17 @@ const Home = ({ router }) => {
 
   useEffect(() => {
     const checkUser = async () => {
-      try {
-        await Auth.currentAuthenticatedUser();
-        setIsSignedIn(true);
-        router.push("/trollbox");
-      } catch (error) {
-        console.error(error);
-      }
+      const session = await Auth.currentSession();
+      setIsSignedIn(!!session);
     };
-  
+
     checkUser();
   }, []);
 
   return (
     <div>
       {isSignedIn ? (
-        <Trollbox />
+        <TrollBox />
       ) : (
         <SignIn />
       )}
