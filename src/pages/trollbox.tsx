@@ -7,6 +7,7 @@ const TrollBox = () => {
   const [username, setUsername] = useState("");
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,8 +37,10 @@ const TrollBox = () => {
         }
       }
     }`;
+    setIsLoading(true);
     API.graphql(graphqlOperation(getMessages)).then((data) => {
       setMessages(data.data.listMessages.items);
+      setIsLoading(false);
     });
   }, []);
 
@@ -68,22 +71,26 @@ const TrollBox = () => {
   };
 
   return (
-    <div>
+<div>
       <h1>Chat Room</h1>
       <div>
-        {messages.map((message) => (
-          <div key={message.id}>
-            <strong>{message.username}: </strong>
-            {message.text}
-          </div>
-        ))}
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          messages.map((message) => (
+            <div key={message.id}>
+              <strong>{message.username}: </strong>
+              {message.text}
+            </div>
+          ))
+        )}
       </div>
       <form onSubmit={handleSubmit}>
         <input type="text" value={text} onChange={handleTextChange} />
         <button type="submit">Send</button>
       </form>
-<button onClick={handleSignOut}>Sign Out</button>
-</div>
-);
+      <button onClick={handleSignOut}>Sign Out</button>
+    </div>
+  );
 };
 export default TrollBox;
