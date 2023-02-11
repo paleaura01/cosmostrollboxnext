@@ -11,46 +11,24 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handleConfirmationCodeChange = (event) => {
-    setConfirmationCode(event.target.value);
-  };
-
+  const handleUsernameChange = (e) => setUsername(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handleConfirmationCodeChange = (e) => setConfirmationCode(e.target.value);
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      if (isSignIn) {
-        await Auth.signIn(username, password);
-        router.push('/trollbox');
-      } else {
-        const signUpResult = await Auth.signUp({
-          username,
-          password,
-          attributes: {
-            email,
-          },
-        });
-        if (!signUpResult.userConfirmed) setIsSignIn(false);
-      }
+      isSignIn
+        ? await Auth.signIn(username, password) && router.push('/trollbox')
+        : !(await Auth.signUp({username, password, attributes: { email }})
+            .userConfirmed) && setIsSignIn(false);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleConfirmSignUp = async () => {
     try {
       await Auth.confirmSignUp(username, confirmationCode);
@@ -59,68 +37,57 @@ const SignIn = () => {
       console.error(error);
     }
   };
-
-  const handleSignUp = () => {
-    setIsSignIn(false);
-  };
+  const handleSignUp = () => setIsSignIn(false);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        {!isSignIn && (
-          <>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            <br />
-          </>
-        )}
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={handleUsernameChange}
-          autoComplete="username"
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={handlePasswordChange}
-          autoComplete="current-password"
-        />
-        <br />
-        {!isSignIn && (
+    <form onSubmit={handleSubmit}>
+      {!isSignIn && (
+        <>
+          <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} />
+          <br />
+        </>
+      )}
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={handleUsernameChange}
+        autoComplete="username"
+      />
+      <br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={handlePasswordChange}
+        autoComplete="current-password"
+      />
+      <br />
+      {!isSignIn && (
+        <div>
+          <input
+            type="text"
+            placeholder="Confirmation Code"
+            value={confirmationCode}
+            onChange={handleConfirmationCodeChange}
+          />
+          <br />
+          <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
+        </div>
+      )}
+      <button type="submit">{isSignIn ? 'Sign In' : 'Sign Up'}</button>
+      {isSignIn ? (
+        <div>
+            Don't have an account?{' '}
+          <button onClick={handleSignUp}>Sign Up!</button>
+          </div>
+        ) : (
           <div>
-            <input type="text"
-placeholder="Confirmation Code"
-value={confirmationCode}
-onChange={handleConfirmationCodeChange}
-/>
-<br />
-<button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
-</div>
-)}
-<button type="submit">{isSignIn ? 'Sign In' : 'Sign Up'}</button>
-</form>
-{isSignIn ? (
-<div>
-Don't have an account?{' '}
-<button onClick={handleSignUp}>Sign Up!</button>
-</div>
-) : (
-<div>
-Already have an account?{' '}
-<button onClick={() => setIsSignIn(true)}>Sign In!</button>
-</div>
-)}
-</div>
-);
-};
-
-export default SignIn;
-
+            Already have an account?{' '}
+            <button onClick={() => setIsSignIn(true)}>Sign In!</button>
+          </div>
+        )}
+      </form>
+    );
+  };
+  export default SignIn;

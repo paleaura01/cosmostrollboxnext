@@ -8,6 +8,7 @@ const TrollBox = () => {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [subscription, setSubscription] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,17 +18,15 @@ const TrollBox = () => {
     });
     const cognitoUser = userPool.getCurrentUser();
     if (cognitoUser) {
-      console.log("Cognito user:", cognitoUser);
       cognitoUser.getSession((err, session) => {
         if (err) {
           console.error(err);
         } else {
-          console.log("Session:", session);
           setUsername(session.getIdToken().payload.username);
         }
       });
     } 
-    
+
     const getMessages = `query {
       listMessages {
         items {
@@ -41,15 +40,32 @@ const TrollBox = () => {
     API.graphql(graphqlOperation(getMessages)).then((data) => {
       setMessages(data.data.listMessages.items);
       setIsLoading(false);
+
+      const newMessageSubscription = `subscription {
+        onCreateMessage {
+          id
+          username
+          text
+        }
+      }`;
+      const subscription = API.graphql(graphqlOperation(newMessageSubscription)).subscribe({
+        next: (eventData) => {
+          setMessages((prevMessages) => [...prevMessages, eventData.value.data.onCreateMessage]);
+        }
+      });
+      setSubscription(subscription);
     });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
-  const handleTextChange = (event) => {
-    setText(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleTextChange = (e) => setText(e.target.value);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const addMessage = `mutation($username: String!, $text: String!) {
       createMessage(input: {username: $username, text: $text}) {
         id
@@ -60,31 +76,19 @@ const TrollBox = () => {
     const result = await API.graphql(
       graphqlOperation(addMessage, { username, text })
     );
-    setMessages([...messages, result.data.createMessage]);
     setText("");
   };
-
-  const handleSignOut = () => {
-    Auth.signOut().then(() => {
-      router.push("/");
-    });
-  };
+  const handleSignOut = () => Auth.signOut().then(() => router.push("/"));
 
   return (
-<div>
+    <div>
       <h1>Chat Room</h1>
-      <div>
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          messages.map((message) => (
-            <div key={message.id}>
-              <strong>{message.username}: </strong>
-              {message.text}
-            </div>
-          ))
-        )}
-      </div>
+      {isLoading ? <div>Loading...</div> : messages.map((message) => (
+        <div key={message.id}>
+          <strong>{message.username}: </strong>
+          {message.text}
+        </div>
+      ))}
       <form onSubmit={handleSubmit}>
         <input type="text" value={text} onChange={handleTextChange} />
         <button type="submit">Send</button>
