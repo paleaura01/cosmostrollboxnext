@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
-import SignIn from '../components/signin';
+import SignIn from './signin';
 import Trollbox from './trollbox';
 import { withRouter } from 'next/router';
 
@@ -12,11 +12,12 @@ const Home = ({ router }) => {
       try {
         await Auth.currentAuthenticatedUser();
         setIsSignedIn(true);
+        router.push("/trollbox");
       } catch (error) {
         console.error(error);
       }
     };
-
+  
     checkUser();
   }, []);
 
