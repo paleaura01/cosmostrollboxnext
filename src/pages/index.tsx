@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
 import SignIn from '../components/signin';
+import Trollbox from './trollbox';
+import { withRouter } from 'next/router';
 
-const Home = () => {
-  
+const Home = ({ router }) => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        await Auth.currentAuthenticatedUser();
+        setIsSignedIn(true);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkUser();
+  }, []);
 
   return (
-    
     <div>
-        <SignIn/>
+      {isSignedIn ? (
+        <Trollbox />
+      ) : (
+        <SignIn />
+      )}
     </div>
   );
 };
 
-export default Home;
+export default withRouter(Home);

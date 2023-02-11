@@ -35,27 +35,27 @@ setRememberMe(event.target.checked);
 };
 
 const handleSubmit = async (event) => {
-event.preventDefault();
-setIsSigningIn(true);
-try {
-if (isSignIn) {
-await Auth.signIn(username, password, rememberMe ? "user" : undefined);
-history.push("/trollbox");
-} else {
-const signUpResult = await Auth.signUp({
-username,
-password,
-attributes: {
-email,
-},
-});
-if (!signUpResult.userConfirmed) setIsSignIn(false);
-}
-} catch (error) {
-console.error(error);
-} finally {
-setIsSigningIn(false);
-}
+  event.preventDefault();
+  setIsSigningIn(true);
+  try {
+    if (isSignIn) {
+      await Auth.signIn(username, password, rememberMe ? "user" : undefined);
+      history.push("/");
+    } else {
+      const signUpResult = await Auth.signUp({
+        username,
+        password,
+        attributes: {
+          email,
+        },
+      });
+      if (!signUpResult.userConfirmed) setIsSignIn(false);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setIsSigningIn(false);
+  }
 };
 
 const handleConfirmSignUp = async () => {

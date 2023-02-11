@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation, Auth } from "aws-amplify";
 import { CognitoUserPool } from "amazon-cognito-identity-js";
-import { withRouter } from "next/router";
+import { withRouter, useRouter } from "next/router";
 
-const TrollBox = ({ router }) => {
+const TrollBox = () => {
   const [username, setUsername] = useState("");
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     // Get the currently signed-in user's username
@@ -21,6 +22,7 @@ const TrollBox = ({ router }) => {
           console.error(err);
         } else {
           setUsername(session.getIdToken().payload.username);
+          router.push("/trollbox");
         }
       });
     } else {
@@ -65,6 +67,12 @@ const TrollBox = ({ router }) => {
     setText("");
   };
 
+  const handleSignOut = () => {
+    Auth.signOut().then(() => {
+      window.location.reload();
+    });
+  };
+
   return (
     <div>
       <h1>Chat Room</h1>
@@ -73,15 +81,15 @@ const TrollBox = ({ router }) => {
           <div key={message.id}>
             <strong>{message.username}: </strong>
             {message.text}
-          </div>
-        ))}
-      </div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={text} onChange={handleTextChange} />
-        <button type="submit">Send</button>
-      </form>
+</div>
+))}
+</div>
+<form onSubmit={handleSubmit}>
+<input type="text" value={text} onChange={handleTextChange} />
+<button type="submit">Send</button>
+</form>
+<button onClick={handleSignOut}>Sign Out</button>
 </div>
 );
 };
-
-export default TrollBox;
+export default withRouter(TrollBox);
