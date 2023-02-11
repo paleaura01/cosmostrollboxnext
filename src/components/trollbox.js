@@ -10,7 +10,6 @@ const TrollBox = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Get the currently signed-in user's username
     const userPool = new CognitoUserPool({
       UserPoolId: "us-east-1_Rb5Wn84th",
       ClientId: "9h486bll3noi9dh3h0eqf0601",
@@ -28,11 +27,8 @@ const TrollBox = () => {
       });
     } else {
       console.error("User is not authenticated");
-      // Redirect the user back to the sign-in page if they are not signed in
       router.push("/");
     }
-
-    // Fetch all messages from the GraphQL API
     const getMessages = `query {
       listMessages {
         items {
@@ -53,8 +49,6 @@ const TrollBox = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Add the message to the GraphQL API
     const addMessage = `mutation($username: String!, $text: String!) {
       createMessage(input: {username: $username, text: $text}) {
         id
@@ -71,7 +65,7 @@ const TrollBox = () => {
 
   const handleSignOut = () => {
     Auth.signOut().then(() => {
-      window.location.reload();
+      router.push("/");
     });
   };
 
@@ -89,10 +83,9 @@ const TrollBox = () => {
       <form onSubmit={handleSubmit}>
         <input type="text" value={text} onChange={handleTextChange} />
         <button type="submit">Send</button>
-</form>
+      </form>
 <button onClick={handleSignOut}>Sign Out</button>
 </div>
 );
 };
-
 export default withRouter(TrollBox);
