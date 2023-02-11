@@ -1,107 +1,87 @@
-import React, { useState } from "react";
-import { Auth } from "aws-amplify";
-import Trollbox from "./Trollbox";
+import React, { useState, useEffect } from "react";
+import { API, graphqlOperation } from "aws-amplify";
+import { CognitoUserPool } from "amazon-cognito-identity-js";
+import { withRouter } from "next/router";
 
-const SignIn = () => {
+const TrollBox = ({ router }) => {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [confirmationCode, setConfirmationCode] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isSignIn, setIsSignIn] = useState(true);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [text, setText] = useState("");
+  const [messages, setMessages] = useState([]);
 
-  // ... other code
+  useEffect(() => {
+    // Get the currently signed-in user's username
+    const userPool = new CognitoUserPool({
+      UserPoolId: "us-east-1_Rb5Wn84th",
+      ClientId: "9h486bll3noi9dh3h0eqf0601",
+    });
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) {
+      cognitoUser.getSession((err, session) => {
+        if (err) {
+          console.error(err);
+        } else {
+          setUsername(session.getIdToken().payload.username);
+        }
+      });
+    } else {
+      // Redirect the user back to the sign-in page if they are not signed in
+      router.push("/");
+    }
+
+    // Fetch all messages from the GraphQL API
+    const getMessages = `query {
+      listMessages {
+        items {
+          id
+          username
+          text
+        }
+      }
+    }`;
+    API.graphql(graphqlOperation(getMessages)).then((data) => {
+      setMessages(data.data.listMessages.items);
+    });
+  }, []);
+
+  const handleTextChange = (event) => {
+    setText(event.target.value);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isSignIn) {
-      try {
-        await Auth.signIn(username, password);
-        if (rememberMe) {
-          await Auth.signIn(username, password, true);
-        }
-        setIsSignedIn(true);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      // ... other code
-    }
-  };
 
-  // ... other code
+    // Add the message to the GraphQL API
+    const addMessage = `mutation($username: String!, $text: String!) {
+      createMessage(input: {username: $username, text: $text}) {
+        id
+        username
+        text
+      }
+    }`;
+    const result = await API.graphql(
+      graphqlOperation(addMessage, { username, text })
+    );
+    setMessages([...messages, result.data.createMessage]);
+    setText("");
+  };
 
   return (
     <div>
-      {isSignedIn ? (
-        <Trollbox />
-      ) : (
-        <form onSubmit={handleSubmit}>
-          {!isSignIn && (
-            <div>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              <br />
-            </div>
-          )}
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={handleUsernameChange}
-          />
-          <br />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          <br />
-          {!isSignIn && (
-            <div>
-              <input
-                type="text"
-                placeholder="Confirmation Code"
-                value={confirmationCode}
-                onChange={handleConfirmationCodeChange}
-              />
-              <br />
-              <button onClick={handleConfirmSignUp}>Confirm Sign Up</button>
-            </div>
-          )}
-          {isSignIn && (
-            <div>
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={handleRememberMeChange}
-              />
-              Remember me
-              <br />
-            </div>
-          )}
-          <button type="submit">{isSignIn ? "Sign In" : "Sign Up"}</button>
-        </form>
-      )}
-      {isSignIn ? (
-        <div>
-          Don't have an account?{" "}
-          <button onClick={handleSignUp}>Sign Up!</button>
-        </div>
-      ) : (
-        <div>
-          Already have an account?{" "}
-          <button onClick={() => setIsSignIn(true)}>Sign In!</button>
-        </div>
-      )}
-    </div>
-  );
+      <h1>Chat Room</h1>
+      <div>
+        {messages.map((message) => (
+          <div key={message.id}>
+            <strong>{message.username}: </strong>
+            {message.text}
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={text} onChange={handleTextChange} />
+        <button type="submit">Send</button>
+      </form>
+</div>
+);
 };
 
-export default SignIn;
+export default TrollBox;
