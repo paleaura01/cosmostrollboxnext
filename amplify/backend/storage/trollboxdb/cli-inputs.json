@@ -1,0 +1,11 @@
+{
+  "resourceName": "trollboxdb",
+  "policyUUID": "314f41e0",
+  "bucketName": "trollboxbucket",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE"
+  ],
+  "triggerFunction": "S3Trigger97b408f3"
+}

@@ -15,6 +15,15 @@
       "auth": {
         "cosmostrollboxnextca87a8c2": {},
         "userPoolGroups": {}
+      },
+      "function": {
+        "S3Trigger97b408f3": {
+          "deploymentBucketName": "amplify-cosmostrollboxnext-dev-191303-deployment",
+          "s3Key": "amplify-builds/S3Trigger97b408f3-4b61366577615169306f-build.zip"
+        }
+      },
+      "storage": {
+        "trollboxdb": {}
       }
     }
   }
